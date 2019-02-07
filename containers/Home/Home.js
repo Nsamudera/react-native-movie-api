@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, View, Text, FlatList } from 'react-native';
+import { StyleSheet, View, Text, FlatList } from 'react-native';
 import axios from 'axios'
 
 //components
@@ -19,13 +19,15 @@ export class Home extends Component {
     state = {
         data: [],
         page: 1,
-        genres: []
+        genres: [],
+        loading: false
     }
     componentDidMount() {
         this.getGenre()
         this.getData()
     }
     getData = () => {
+        this.setState({loading: true})
         axios({
             method: "get",
             url: `https://api.themoviedb.org/3/movie/now_playing?api_key=9a30f18e84cac37fa60aca083559a7b3&language=en-US&page=${this.state.page}`
@@ -33,7 +35,8 @@ export class Home extends Component {
         .then(response => {
             this.setState({
                 data: [...this.state.data, ...response.data.results],
-                page: this.state.page + 1
+                page: this.state.page + 1,
+                loading: false
             })
         })
         .catch(err => {
@@ -57,15 +60,21 @@ export class Home extends Component {
     render() {
         if(this.state.data.length > 0) {
             return (
-                <FlatList 
-                    onEndReached={this.getData}
-                    onEndReachedThreshold={1}
-                    data={this.state.data}
-                    renderItem={({item}) => 
-                        <Data data={item} navigation={this.props.navigation} genres={this.state.genres}/>
+                <View style={{flex:1, alignItems:'center'}}>
+                    <FlatList 
+                        onEndReached={this.getData}
+                        onEndReachedThreshold={0.2}
+                        data={this.state.data}
+                        renderItem={({item}) => 
+                            <Data data={item} navigation={this.props.navigation} genres={this.state.genres}/>
+                        }
+                        keyExtractor={(item, index) => index.toString()}    
+                    />
+                    {this.state.loading &&
+                    <Text style={styles.loading}>Loading . . .</Text>
                     }
-                    keyExtractor={(item, index) => index.toString()}    
-                />
+                </View>
+                
             );
         } else {
             return (
@@ -77,5 +86,17 @@ export class Home extends Component {
             
     }
 }
+
+const styles = StyleSheet.create({
+    loading: {
+        position:'absolute', 
+        fontSize:22, 
+        bottom:0,
+        backgroundColor: '#233e37',
+        color: '#00e378',
+        width: '100%',
+        textAlign: 'center',
+    }
+});
 
 export default Home

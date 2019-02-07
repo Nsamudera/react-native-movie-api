@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, View, TouchableOpacity, Dimensions, Text, FlatList } from 'react-native';
-import { Card, Button } from 'react-native-elements'
+import { StyleSheet, View, TouchableOpacity, Dimensions, Text, FlatList } from 'react-native';
+import { Card } from 'react-native-elements'
 
 export class Data extends Component {
     state = {
@@ -30,23 +30,18 @@ export class Data extends Component {
     render() {
         let screenWidth = Dimensions.get('window').width
 
-        let genres = ['']
-        if(this.props.genres) {
-            // genres = this.props.data.genre_ids.map(this.formatGenres)
-            // this.formatGenres()
-        }
+        //To Display Data on "Related Movies"
         if(this.props.reference) {
             return (
                 <View>
                     <TouchableOpacity onPress={() => this.change()} >
                         <Card
                             title={this.props.data.original_title}
-                            image={{ 
-                                uri: `https://image.tmdb.org/t/p/w500${this.props.data.poster_path}`}}
+                            image={{uri: `https://image.tmdb.org/t/p/w500${this.props.data.poster_path}`}}
                             imageStyle={{height:350, width: screenWidth - 50}}
                             containerStyle={{backgroundColor: '#0b2129'}}
                             titleStyle={{color: '#00e378'}}
-                            >
+                        >
                             <FlatList 
                                 numColumns={3}   
                                 columnWrapperStyle={{justifyContent:'space-evenly'}} 
@@ -61,6 +56,8 @@ export class Data extends Component {
                     </TouchableOpacity>
                 </View>
             );
+            
+        //To Display Data on "Home"
         } else {
             return (
                 <View>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, View, Text, Image, Dimensions, ScrollView, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Image, Dimensions, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import moment from 'moment'
 import axios from 'axios'
@@ -22,7 +22,8 @@ export class Detail extends Component {
     };
     state = {
         similarMovies: [],
-        page: 1
+        page: 1,
+        loading: false
     }
     componentDidMount = () => {
         this.setState({
@@ -32,6 +33,7 @@ export class Detail extends Component {
         })
     }
     getSimilarMovies = () => {
+        this.setState({loading: true})
         axios({
             method: "get",
             url: `https://api.themoviedb.org/3/movie/${this.props.navigation.getParam('data').id}/similar?api_key=9a30f18e84cac37fa60aca083559a7b3&language=en-US&page=${this.state.page}`
@@ -39,7 +41,8 @@ export class Detail extends Component {
             .then(response => {
                 this.setState({
                     similarMovies: [...this.state.similarMovies, ...response.data.results],
-                    page: this.state.page + 1
+                    page: this.state.page + 1,
+                    loading: false
                 })
             })
             .catch(err => {
@@ -74,8 +77,7 @@ export class Detail extends Component {
                                 style={{ width: screenWidth, height: (screenHeight - 200) }}
                             />
 
-                            {/* Description */}
-
+                            {/* Info and Description */}
                             <View style={styles.description}>
                                 <View style={{ flexDirection: 'row', marginBottom: 20 }}>
                                     <Text style={{ flex: 1 }}>
@@ -119,20 +121,24 @@ export class Detail extends Component {
                     <View style={{ width: screenWidth, alignItems: "center" }}>
                         <Text style={styles.heading}>Related Movies:</Text>
                         {this.state.similarMovies.length > 0 ?
-                            <FlatList
-                                onEndReached={this.getSimilarMovies}
-                                onEndReachedThreshold={1}
-                                data={this.state.similarMovies}
-                                renderItem={({ item }) =>
-                                    <Data data={item} navigation={this.props.navigation} reference={true} swipe={this.swipeLeft} genres={this.props.navigation.getParam('genreList')} />
+                            <View style={{flex:1, alignItems:'center'}}>
+                                <FlatList
+                                    onEndReached={this.getSimilarMovies}
+                                    onEndReachedThreshold={0.2}
+                                    data={this.state.similarMovies}
+                                    renderItem={({ item }) =>
+                                        <Data data={item} navigation={this.props.navigation} reference={true} swipe={this.swipeLeft} genres={this.props.navigation.getParam('genreList')} />
+                                    }
+                                    keyExtractor={(item, index) => index.toString()}
+                                />
+                                {this.state.loading &&
+                                <Text style={styles.loading}>Loading . . .</Text>
                                 }
-                                keyExtractor={(item, index) => index.toString()}
-                            />
+                            </View>
                             :
                             <Text>No Related Movies Found</Text>
                         }
                     </View>
-
                 </ScrollView>
             </View>
         );
@@ -157,6 +163,15 @@ const styles = StyleSheet.create({
     relatedMovies: {
         alignItems: 'center',
         backgroundColor: '#233e37'
+    },
+    loading: {
+        position:'absolute', 
+        fontSize:22, 
+        bottom:0,
+        backgroundColor: '#233e37',
+        color: '#00e378',
+        width: '100%',
+        textAlign: 'center',
     }
 });
 

@@ -7,10 +7,8 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet} from 'react-native';
 import { createStackNavigator, createAppContainer, createBottomTabNavigator } from "react-navigation";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-
 
 //components
 import Home from './containers/Home/Home.js'

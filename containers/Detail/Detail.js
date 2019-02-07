@@ -26,11 +26,7 @@ export class Detail extends Component {
         loading: false
     }
     componentDidMount = () => {
-        this.setState({
-            page: 1
-        }, () => {
-            this.getSimilarMovies()
-        })
+        this.getSimilarMovies()
     }
     getSimilarMovies = () => {
         this.setState({loading: true})
@@ -51,6 +47,9 @@ export class Detail extends Component {
     }
     swipeLeft = () => {
         this.scroll.scrollTo({ x: 0, y: 0, animated: true });
+        this.setState({page: 1, similarMovies: []}, () => {
+            this.getSimilarMovies()
+        })
     }
     swipeRight = () => {
         this.scroll.scrollTo({ x: 1000, y: 0, animated: true });

@@ -22,19 +22,28 @@ const AppNavigator = createStackNavigator(
     Detail: Detail,
   },
   {
-    initialRouteName: "Home"
+    initialRouteName: "Home",
   }
 );
 
 AppNavigator.navigationOptions =({ navigation }) => {
   let navigationOptions = {};
-  navigationOptions.tabBarIcon = ({ focused }) => <Icon name="home" size={22}></Icon>;
+  navigationOptions.tabBarIcon = ({ focused }) => <Icon name="home" size={22} color='#00e378'></Icon>;
   return navigationOptions;
 }
 
 const AppContainerTab = createAppContainer(createBottomTabNavigator(
   {
     Home: AppNavigator,
+  },
+  {
+    tabBarOptions: {
+      style: {
+        backgroundColor: '#091A21',
+        
+      },
+      activeTintColor: '#00e378'
+    }
   }
 ));
 

@@ -9,14 +9,20 @@ export class Home extends Component {
     static navigationOptions = {
         headerTitle: "Movie DB",
         headerTitleStyle: {
-            fontStyle: "italic"
+            fontStyle: "italic",
         },
+        headerStyle: {
+            backgroundColor: '#0b2129',
+        },
+        headerTintColor: '#00e378'
     };
     state = {
         data: [],
-        page: 1
+        page: 1,
+        genres: []
     }
     componentDidMount() {
+        this.getGenre()
         this.getData()
     }
     getData = () => {
@@ -24,18 +30,29 @@ export class Home extends Component {
             method: "get",
             url: `https://api.themoviedb.org/3/movie/now_playing?api_key=9a30f18e84cac37fa60aca083559a7b3&language=en-US&page=${this.state.page}`
         })
-            .then(response => {
-                this.setState({
-                    data: [...this.state.data, ...response.data.results],
-                    page: this.state.page + 1
-                })
+        .then(response => {
+            this.setState({
+                data: [...this.state.data, ...response.data.results],
+                page: this.state.page + 1
             })
-            .catch(err => {
-                alert(JSON.stringify(err.response))
-            })
+        })
+        .catch(err => {
+            alert(JSON.stringify(err.response))
+        })
     }
-    getMoreData = () => {
-        
+    getGenre = () => {
+        axios({
+            method: "get",
+            url: `https://api.themoviedb.org/3/genre/movie/list?api_key=9a30f18e84cac37fa60aca083559a7b3&language=en-US`
+        })
+        .then(response => {
+            this.setState({
+                genres: response.data.genres,
+            })
+        })
+        .catch(err => {
+            alert(JSON.stringify(err.response))
+        })
     }
     render() {
         if(this.state.data.length > 0) {
@@ -45,7 +62,7 @@ export class Home extends Component {
                     onEndReachedThreshold={1}
                     data={this.state.data}
                     renderItem={({item}) => 
-                        <Data data={item} navigation={this.props.navigation}/>
+                        <Data data={item} navigation={this.props.navigation} genres={this.state.genres}/>
                     }
                     keyExtractor={(item, index) => index.toString()}    
                 />
